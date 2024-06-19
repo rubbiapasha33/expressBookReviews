@@ -1,10 +1,9 @@
 const express = require('express');
 let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
-let users = require("./auth_users.js").users;
+let { isValid, users } = require("./auth_users.js");
 const public_users = express.Router();
 
-
+// Register a new user
 public_users.post("/register", (req, res) => {
   const { username, password } = req.body;
 
@@ -38,8 +37,10 @@ public_users.get('/isbn/:isbn', function (req, res) {
 
 // Get book details based on author
 public_users.get('/author/:author', function (req, res) {
-    const author = req.params.author;
-    const booksByAuthor = books.filter(book => book.author.toLowerCase().includes(author.toLowerCase()));
+    const author = req.params.author.toLowerCase();
+    console.log(`Searching for author: ${author}`);
+    const booksByAuthor = books.filter(book => book.author.toLowerCase().includes(author));
+    console.log(`Books found: ${JSON.stringify(booksByAuthor)}`);
     if (booksByAuthor.length > 0) {
         res.status(200).json(booksByAuthor);
     } else {
@@ -49,8 +50,8 @@ public_users.get('/author/:author', function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title', function (req, res) {
-    const title = req.params.title;
-    const booksByTitle = books.filter(book => book.title.toLowerCase().includes(title.toLowerCase()));
+    const title = req.params.title.toLowerCase();
+    const booksByTitle = books.filter(book => book.title.toLowerCase().includes(title));
     if (booksByTitle.length > 0) {
         res.status(200).json(booksByTitle);
     } else {
